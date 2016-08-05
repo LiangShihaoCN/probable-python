@@ -1,0 +1,40 @@
+import os   #导入os包
+account_file = 'account.txt'  #用户名密码文件
+lock_file = 'lock.txt'        #锁定用户文件
+
+# put account in a list  #读取用户名密码信息
+f = file(account_file)   #打开文件
+account_list = f.readlines()  #读取全部行
+f.close()              #关闭文件
+while True:              #循环
+  # put locked user into a lock list   #读取锁定用户数据
+  f = file(lock_file)            #打开文件
+  lock_list = []               #定义数组
+  for i in   f.readlines():    #循环读取行
+        line = i.strip('\n')   #strip掉换行
+        lock_list.append(line)  #数据在文件最后添加
+  f.close()                        #关闭文件
+ 
+  loginSuccess = False             #定义登录成功与否的标签
+  username = raw_input('user:').strip()   #   输入用户名（strip掉空格）
+  if username in lock_list:      # 用户名已锁
+	#print "Sorry , you are already in the block list , get the fuckng out!" #提示信息
+	break          #退出
+  for line in account_list:     #按行匹配用户名
+	line = line.split()     #切片(按空格)
+	if line[0] == username: #用户名正确
+	  for i in range(3):    #最多输错三次密码
+		  password = raw_input('passwd:').strip()#读取密码	
+		  if password == line[1]: #correct passwd  #密码正确
+		    print "Welcome %s login my system!@" % username# 登录成功
+		    loginSuccess = True  #设置标签
+		    break #退出循环
+		  
+	  else:              #三次密码都输入错误
+		f = file(lock_file, 'a')   #打开锁定文件
+		f.write('%s\n' %username)  #写入用户名
+		f.close()    #关闭文件
+		print "Entered 3 times of wrong passwd,going to lock %s" % username   #提示用户名已被锁定
+		
+	  if loginSuccess == True:break #jump out of the for top loop 	  
+  if loginSuccess == True:break # jump out of while loop 
